@@ -8,6 +8,14 @@ fn create_grid(lines: &str) -> Vec<Vec<char>> {
     lines.lines().map(|line| line.chars().collect()).collect()
 }
 
+fn get_columns_example(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
+    let first_column: Vec<u32> = grid.iter().filter_map(|row| row.get(0)).map(|ch| ch.to_digit(10).expect("No digit")).collect();
+    let second_column: Vec<u32> = grid.iter().filter_map(|row| row.get(4)).map(|ch| ch.to_digit(10).expect("No digit")).collect();
+
+
+    (first_column, second_column)
+}
+
 fn get_columns(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
     let second_column: Vec<u32> = grid
         .iter()
@@ -47,14 +55,24 @@ fn part1(_input: &str) -> u32 {
     total_differences
 }
 
+fn part1_example(_input: &str) -> u32 {
+    let grid = create_grid(_input);
+    let (first_column, second_column) = get_columns_example(grid);
+    let first_sorted_column = sort_elements(first_column);
+    let second_sorted_column = sort_elements(second_column);
+
+    let total_differences = get_differences(first_sorted_column, second_sorted_column);
+    total_differences
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn it_works() {
-        let input = include_str!("./example2.txt");
-        let result = part1(input);
+        let input = include_str!("./example1.txt");
+        let result = part1_example(input);
         assert_eq!(result, 11 as u32);
     }
 }
