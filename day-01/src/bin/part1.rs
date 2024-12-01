@@ -9,9 +9,16 @@ fn create_grid(lines: &str) -> Vec<Vec<char>> {
 }
 
 fn get_columns_example(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
-    let first_column: Vec<u32> = grid.iter().filter_map(|row| row.get(0)).map(|ch| ch.to_digit(10).expect("No digit")).collect();
-    let second_column: Vec<u32> = grid.iter().filter_map(|row| row.get(4)).map(|ch| ch.to_digit(10).expect("No digit")).collect();
-
+    let first_column: Vec<u32> = grid
+        .iter()
+        .filter_map(|row| row.get(0))
+        .map(|ch| ch.to_digit(10).expect("No digit"))
+        .collect();
+    let second_column: Vec<u32> = grid
+        .iter()
+        .filter_map(|row| row.get(4))
+        .map(|ch| ch.to_digit(10).expect("No digit"))
+        .collect();
 
     (first_column, second_column)
 }
@@ -20,12 +27,12 @@ fn get_columns(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
     let second_column: Vec<u32> = grid
         .iter()
         .filter_map(|row| row.get(8..13))
-        .map(|slice| {slice.iter().collect::<String>().parse::<u32>().unwrap()})
+        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
         .collect();
     let first_column: Vec<u32> = grid
         .iter()
         .filter_map(|row| row.get(0..5))
-        .map(|slice| {slice.iter().collect::<String>().parse::<u32>().unwrap()})
+        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
         .collect();
 
     (first_column, second_column)

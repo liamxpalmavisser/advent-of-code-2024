@@ -14,21 +14,28 @@ fn get_columns(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
     let second_column: Vec<u32> = grid
         .iter()
         .filter_map(|row| row.get(8..13))
-        .map(|slice| {slice.iter().collect::<String>().parse::<u32>().unwrap()})
+        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
         .collect();
     let first_column: Vec<u32> = grid
         .iter()
         .filter_map(|row| row.get(0..5))
-        .map(|slice| {slice.iter().collect::<String>().parse::<u32>().unwrap()})
+        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
         .collect();
 
     (first_column, second_column)
 }
 
 fn get_columns_example(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
-    let first_column: Vec<u32> = grid.iter().filter_map(|row| row.get(0)).map(|ch| ch.to_digit(10).expect("No digit")).collect();
-    let second_column: Vec<u32> = grid.iter().filter_map(|row| row.get(4)).map(|ch| ch.to_digit(10).expect("No digit")).collect();
-
+    let first_column: Vec<u32> = grid
+        .iter()
+        .filter_map(|row| row.get(0))
+        .map(|ch| ch.to_digit(10).expect("No digit"))
+        .collect();
+    let second_column: Vec<u32> = grid
+        .iter()
+        .filter_map(|row| row.get(4))
+        .map(|ch| ch.to_digit(10).expect("No digit"))
+        .collect();
 
     (first_column, second_column)
 }
@@ -39,7 +46,7 @@ fn count_to_hash(column: Vec<u32>) -> HashMap<u32, u32> {
     for n in column.iter() {
         match hash_counter.get(n) {
             Some(count) => hash_counter.insert(*n, count + 1),
-            None => hash_counter.insert(*n, 1)
+            None => hash_counter.insert(*n, 1),
         };
     }
     hash_counter
@@ -51,15 +58,14 @@ fn multiply_cols(col: Vec<u32>, counter: HashMap<u32, u32>) -> u32 {
         match counter.get(n) {
             Some(count) => {
                 sum_col.push(*n * *count);
-            },
-            None => ()
+            }
+            None => (),
         }
     }
 
     if sum_col.is_empty() {
         panic!("Joe");
-    }
-    else {
+    } else {
         sum_col.into_iter().sum()
     }
 }
