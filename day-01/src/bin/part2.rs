@@ -1,4 +1,4 @@
-use std::collections::{hash_map, HashMap};
+use std::collections::HashMap;
 
 fn main() {
     let input = include_str!("./input.txt");
@@ -6,86 +6,67 @@ fn main() {
     dbg!(output);
 }
 
-fn create_grid(input: &str) -> Vec<Vec<char>> {
-    input.lines().map(|line| line.chars().collect()).collect()
+pub struct Solution<'a> {
+    input: &'a str,
+    col1: Vec<i32>,
+    // col2: Vec<i32>,
+    counter: HashMap<i32, i32>,
 }
 
-fn get_columns(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
-    let second_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(8..13))
-        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
-        .collect();
-    let first_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(0..5))
-        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
-        .collect();
+impl<'a> Solution<'a> {
+    pub fn new(input: &'a str) -> Self {
+        let (col1, col2) = Self::parse_input_to_columns(input);
+        let counter = Self::get_counter(col2);
 
-    (first_column, second_column)
-}
-
-fn get_columns_example(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
-    let first_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(0))
-        .map(|ch| ch.to_digit(10).expect("No digit"))
-        .collect();
-    let second_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(4))
-        .map(|ch| ch.to_digit(10).expect("No digit"))
-        .collect();
-
-    (first_column, second_column)
-}
-
-fn count_to_hash(column: Vec<u32>) -> HashMap<u32, u32> {
-    let mut hash_counter: HashMap<u32, u32> = HashMap::new();
-
-    for n in column.iter() {
-        match hash_counter.get(n) {
-            Some(count) => hash_counter.insert(*n, count + 1),
-            None => hash_counter.insert(*n, 1),
-        };
-    }
-    hash_counter
-}
-
-fn multiply_cols(col: Vec<u32>, counter: HashMap<u32, u32>) -> u32 {
-    let mut sum_col: Vec<u32> = Vec::new();
-    for n in col.iter() {
-        match counter.get(n) {
-            Some(count) => {
-                sum_col.push(*n * *count);
-            }
-            None => (),
+        Self {
+            input,
+            col1,
+            counter,
         }
     }
 
-    if sum_col.is_empty() {
-        panic!("Joe");
-    } else {
-        sum_col.into_iter().sum()
+    fn parse_input_to_columns(input: &str) -> (Vec<i32>, Vec<i32>) {
+        let mut col1 = Vec::new();
+        let mut col2 = Vec::new();
+
+        let numbers = input.lines().map(|line| line.split_whitespace());
+
+        for mut line in numbers {
+            if let (Some(a), Some(b)) = (line.next(), line.next()) {
+                col1.push(a.parse::<i32>().expect("This is no number"));
+                col2.push(b.parse::<i32>().expect("This is no number"));
+            }
+        }
+
+        (col1, col2)
+    }
+
+    fn get_counter(col: Vec<i32>) -> HashMap<i32, i32> {
+        let mut counter = HashMap::new();
+        for n in col.into_iter() {
+            match counter.get(&n) {
+                Some(count) => counter.insert(n, count + 1),
+                None => counter.insert(n, 1),
+            };
+        }
+        counter
+    }
+
+    fn get_product(&self) -> i32 {
+        self.col1
+            .clone()
+            .into_iter()
+            .map(|n| match self.counter.get(&n) {
+                Some(count) => count * n,
+                None => 0,
+            })
+            .sum()
     }
 }
 
-fn part2(_input: &str) -> u32 {
-    let grid = create_grid(_input);
-    let (first_column, second_column) = get_columns(grid);
-
-    let hash_counter = count_to_hash(second_column);
-
-    multiply_cols(first_column, hash_counter)
-}
-
-fn part2_example(_input: &str) -> u32 {
-    let grid = create_grid(_input);
-    let (first_column, second_column) = get_columns_example(grid);
-
-    let hash_counter = count_to_hash(second_column);
-
-    multiply_cols(first_column, hash_counter)
+fn part2(input: &str) -> i32 {
+    let solution = Solution::new(input);
+    solution.get_product()
 }
 
 #[cfg(test)]
@@ -95,7 +76,7 @@ mod tests {
     #[test]
     fn it_works() {
         let input = include_str!("./example1.txt");
-        let result = part2_example(input);
-        assert_eq!(result, 31 as u32);
+        let result = part2(input);
+        assert_eq!(result, 31 as i32);
     }
 }

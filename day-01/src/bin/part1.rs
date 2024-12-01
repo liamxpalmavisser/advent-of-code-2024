@@ -4,72 +4,52 @@ fn main() {
     dbg!(output);
 }
 
-fn create_grid(lines: &str) -> Vec<Vec<char>> {
-    lines.lines().map(|line| line.chars().collect()).collect()
+pub struct Solution<'a> {
+    input: &'a str,
+    col1: Vec<i32>,
+    col2: Vec<i32>,
 }
 
-fn get_columns_example(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
-    let first_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(0))
-        .map(|ch| ch.to_digit(10).expect("No digit"))
-        .collect();
-    let second_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(4))
-        .map(|ch| ch.to_digit(10).expect("No digit"))
-        .collect();
-
-    (first_column, second_column)
-}
-
-fn get_columns(grid: Vec<Vec<char>>) -> (Vec<u32>, Vec<u32>) {
-    let second_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(8..13))
-        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
-        .collect();
-    let first_column: Vec<u32> = grid
-        .iter()
-        .filter_map(|row| row.get(0..5))
-        .map(|slice| slice.iter().collect::<String>().parse::<u32>().unwrap())
-        .collect();
-
-    (first_column, second_column)
-}
-
-fn sort_elements(mut column: Vec<u32>) -> Vec<u32> {
-    column.sort_unstable_by(|a, b| b.cmp(a));
-    column
-}
-
-fn get_differences(column_1: Vec<u32>, column_2: Vec<u32>) -> u32 {
-    let mut distance_vec: Vec<u32> = Vec::new();
-    for (a, b) in column_1.iter().zip(column_2.iter()) {
-        distance_vec.push(a.abs_diff(*b))
+impl<'a> Solution<'a> {
+    pub fn new(input: &'a str) -> Self {
+        let (col1, col2) = Self::parse_input_to_columns(input);
+        Self { input, col1, col2 }
     }
-    let total_distance: u32 = distance_vec.iter().sum();
-    total_distance
+
+    fn parse_input_to_columns(input: &str) -> (Vec<i32>, Vec<i32>) {
+        let mut col1 = Vec::new();
+        let mut col2 = Vec::new();
+
+        let numbers = input.lines().map(|line| line.split_whitespace());
+
+        for mut line in numbers {
+            if let (Some(a), Some(b)) = (line.next(), line.next()) {
+                col1.push(a.parse::<i32>().expect("This is no number"));
+                col2.push(b.parse::<i32>().expect("This is no number"));
+            }
+        }
+
+        (col1, col2)
+    }
+
+    pub fn sort_column(&mut self) {
+        self.col1.sort_unstable_by(|a, b| b.cmp(a));
+        self.col2.sort_unstable_by(|a, b| b.cmp(a));
+    }
+
+    pub fn col_difference(&self) -> i32 {
+        self.col1
+            .iter()
+            .zip(self.col2.iter())
+            .map(|(a, b)| (a - b).abs())
+            .sum()
+    }
 }
 
-fn part1(_input: &str) -> u32 {
-    let grid = create_grid(_input);
-    let (first_column, second_column) = get_columns(grid);
-    let first_sorted_column = sort_elements(first_column);
-    let second_sorted_column = sort_elements(second_column);
-
-    let total_differences = get_differences(first_sorted_column, second_sorted_column);
-    total_differences
-}
-
-fn part1_example(_input: &str) -> u32 {
-    let grid = create_grid(_input);
-    let (first_column, second_column) = get_columns_example(grid);
-    let first_sorted_column = sort_elements(first_column);
-    let second_sorted_column = sort_elements(second_column);
-
-    let total_differences = get_differences(first_sorted_column, second_sorted_column);
-    total_differences
+fn part1(_input: &str) -> i32 {
+    let mut solution = Solution::new(_input);
+    solution.sort_column();
+    solution.col_difference()
 }
 
 #[cfg(test)]
@@ -79,7 +59,7 @@ mod tests {
     #[test]
     fn it_works() {
         let input = include_str!("./example1.txt");
-        let result = part1_example(input);
-        assert_eq!(result, 11 as u32);
+        let result = part1(input);
+        assert_eq!(result, 11 as i32);
     }
 }
