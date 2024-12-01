@@ -1,6 +1,6 @@
 from collections import Counter
 
-with open("../src/bin/input.txt") as file:
+with open("./input.txt") as file:
     lines = file.read().splitlines()
 
 
