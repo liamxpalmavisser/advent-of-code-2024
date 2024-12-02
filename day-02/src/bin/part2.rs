@@ -27,7 +27,6 @@ impl<'a> Solution<'a> {
         rows
     }
 
-    /// Checks if a row is "safe" under the original rules.
     fn is_safe(row: &[i32]) -> bool {
         if row.len() < 2 {
             return false;
@@ -44,10 +43,8 @@ impl<'a> Solution<'a> {
         true
     }
 
-    /// Checks if a row becomes "safe" by removing one element.
     fn is_safe_with_removal(row: &[i32]) -> bool {
         for i in 0..row.len() {
-            // Create a new row with the i-th element removed
             let mut new_row = row.to_vec();
             new_row.remove(i);
             if Self::is_safe(&new_row) {

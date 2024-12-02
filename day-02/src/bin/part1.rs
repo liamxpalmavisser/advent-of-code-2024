@@ -27,25 +27,27 @@ impl<'a> Solution<'a> {
         rows
     }
 
+    fn is_safe(row: &[i32]) -> bool {
+        if row.len() <2 {
+            return false;
+        }
+        let initial_diff = row[1] - row[0];
+        let initial_sign = initial_diff.signum();
+
+        for window in row.windows(2) {
+            let diff = window[1] - window[0];
+            if diff.signum() != initial_sign || diff.abs() > 3 || diff == 0 {
+                return false;
+            }
+        }
+        true
+    }
+
     pub fn sort_row(&mut self) -> i32 {
         let mut n_safe: i32 = 0;
 
         for row in self.rows.iter() {
-            let initial_diff = row[1] - row[0];
-            let initial_sign = initial_diff.signum();
-            let mut completed_without_break = true;
-
-            for window in row.windows(2) {
-                if (window[1] - window[0]).signum() != initial_sign
-                    || (window[1] - window[0]).abs() > 3
-                    || (window[1] - window[0]) == 0
-                {
-                    completed_without_break = false;
-                    break;
-                }
-            }
-            if completed_without_break {
-                println!("{:?}", row);
+            if Self::is_safe(row) {
                 n_safe += 1;
             }
         }
