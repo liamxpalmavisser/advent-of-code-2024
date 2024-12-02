@@ -59,13 +59,9 @@ impl<'a> Solution<'a> {
 
         for row in self.rows.iter() {
             if Self::is_safe(row) || Self::is_safe_with_removal(row) {
-                println!("{:?} is safe", row);
                 n_safe += 1;
-            } else {
-                println!("{:?} is unsafe", row);
             }
         }
-
         n_safe
     }
 }
