@@ -28,7 +28,7 @@ impl<'a> Solution<'a> {
     }
 
     fn is_safe(row: &[i32]) -> bool {
-        if row.len() <2 {
+        if row.len() < 2 {
             return false;
         }
         let initial_diff = row[1] - row[0];

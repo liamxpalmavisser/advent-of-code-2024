@@ -70,7 +70,6 @@ impl<'a> Solution<'a> {
     }
 }
 
-
 fn part2(_input: &str) -> i32 {
     let mut solution = Solution::new(_input);
     solution.sort_row()
