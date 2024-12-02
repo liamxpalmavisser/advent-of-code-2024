@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let input = include_str!("./example1.txt");
+        let input = include_str!("./example.txt");
         let result = part1(input);
         assert_eq!(result, 11 as i32);
     }
