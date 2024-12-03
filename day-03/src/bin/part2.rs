@@ -1,36 +1,50 @@
 fn main() {
     let input = include_str!("./input.txt");
-    let output = part1(input);
-    dbg!(output);
+    let result = part1(input);
+    dbg!(result);
+}
+
+fn check_enable_state(expr: &str, current_state: bool) -> bool {
+    match expr {
+        e if e.contains("do()") => true,
+        e if e.contains("don't()") => false,
+        _ => current_state,
+    }
 }
 
 fn parse(input: &str) -> Vec<(i32, i32)> {
-    let joe: Vec<&str> = input.split("mul(").collect();
-    let new_joe = &joe[1..];
-    let mut results = Vec::new();
+    let parts: Vec<&str> = input.split("mul(").collect();
+    let mut pairs = Vec::new();
+    let mut enabled = true;
 
-    for part in new_joe.iter() {
-        if let Some(end_idx) = part.find(')') {
-            let content = &part[..end_idx];
-            if let Some((x, y)) = content.split_once(',') {
+    for part in &parts[1..] {
+        if let Some(idx) = part.find(')') {
+            let expr = &part[..idx];
+
+            enabled = check_enable_state(expr, enabled);
+
+            if let Some((x, y)) = expr.split_once(',') {
                 if let (Ok(x), Ok(y)) = (x.trim().parse::<i32>(), y.trim().parse::<i32>()) {
-                    results.push((x, y));
+                    if enabled {
+                        pairs.push((x, y));
+                    }
                 }
+            }
+
+            if let Some(rest) = part.get(idx..) {
+                enabled = check_enable_state(rest, enabled);
             }
         }
     }
-    results
+    pairs
 }
 
-fn get_products(input: Vec<(i32, i32)>) -> i32 {
-    let product_sum: i32 = input.iter().map(|&(x, y)| x* y).sum();
-    product_sum
+fn get_products(pairs: Vec<(i32, i32)>) -> i32 {
+    pairs.iter().map(|&(x, y)| x * y).sum()
 }
 
 fn part1(input: &str) -> i32 {
-    let parsed_input = parse(input);
-    let product_sum = get_products(parsed_input);
-    product_sum
+    get_products(parse(input))
 }
 
 #[cfg(test)]
@@ -41,6 +55,6 @@ mod tests {
     fn it_works() {
         let input = include_str!("./example.txt");
         let result = part1(input);
-        assert_eq!(result, 48 as i32);
+        assert_eq!(result, 48);
     }
 }

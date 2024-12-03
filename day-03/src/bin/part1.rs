@@ -5,25 +5,24 @@ fn main() {
 }
 
 fn parse(input: &str) -> Vec<(i32, i32)> {
-    let joe: Vec<&str> = input.split("mul(").collect();
-    let new_joe = &joe[1..];
-    let mut results = Vec::new();
+    let parts: Vec<&str> = input.split("mul(").collect();
+    let mut pairs = Vec::new();
 
-    for part in new_joe.iter() {
+    for part in &parts[1..] {
         if let Some(end_idx) = part.find(')') {
             let content = &part[..end_idx];
             if let Some((x, y)) = content.split_once(',') {
                 if let (Ok(x), Ok(y)) = (x.trim().parse::<i32>(), y.trim().parse::<i32>()) {
-                    results.push((x, y));
+                    pairs.push((x, y));
                 }
             }
         }
     }
-    results
+    pairs
 }
 
 fn get_products(input: Vec<(i32, i32)>) -> i32 {
-    let product_sum: i32 = input.iter().map(|&(x, y)| x* y).sum();
+    let product_sum: i32 = input.iter().map(|&(x, y)| x * y).sum();
     product_sum
 }
 
