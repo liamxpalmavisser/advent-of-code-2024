@@ -15,7 +15,6 @@ fn get_coord_value(grid: &Vec<Vec<char>>, coord: (i32, i32)) -> Option<char> {
 }
 
 fn is_xmas(grid: &Vec<Vec<char>>, current: (i32, i32)) -> bool {
-    println!("{:?}", current);
     match (
         get_coord_value(grid, (current.0 - 1, current.1 - 1)),
         get_coord_value(grid, (current.0 + 1, current.1 + 1)),

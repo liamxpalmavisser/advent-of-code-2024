@@ -8,7 +8,7 @@ fn get_coord_value(grid: &Vec<Vec<char>>, coord: (i32, i32)) -> Option<char> {
     let (y, x) = coord;
     if let Some(column) = grid.get(y as usize) {
         if let Some(value) = column.get(x as usize) {
-            return Some(*value); // Dereference to return char
+            return Some(*value);
         }
     }
     None
@@ -49,7 +49,6 @@ fn part1(input: &str) -> u32 {
 
                 for &dir in &directions {
                     if is_xmas(&grid, coord, dir, 0) {
-                        println!("{:?}", coord);
                         count += 1;
                     }
                 }
