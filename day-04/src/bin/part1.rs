@@ -4,6 +4,17 @@ fn main() {
     dbg!(output);
 }
 
+const DIRECTIONS: [(i32, i32); 8] = [
+    (0, 1),
+    (1, 0),
+    (0, -1),
+    (-1, 0),
+    (1, 1),
+    (-1, -1),
+    (-1, 1),
+    (1, -1),
+];
+
 fn get_coord_value(grid: &Vec<Vec<char>>, coord: (i32, i32)) -> Option<char> {
     let (y, x) = coord;
     if let Some(column) = grid.get(y as usize) {
@@ -30,16 +41,6 @@ fn get_grid(input: &str) -> Vec<Vec<char>> {
 
 fn part1(input: &str) -> u32 {
     let grid = get_grid(input);
-    let directions = [
-        (0, 1),
-        (1, 0),
-        (0, -1),
-        (-1, 0),
-        (1, 1),
-        (-1, -1),
-        (-1, 1),
-        (1, -1),
-    ];
     let mut count = 0;
 
     for (y, row) in grid.iter().enumerate() {
@@ -47,7 +48,7 @@ fn part1(input: &str) -> u32 {
             if ch == 'X' {
                 let coord = (y as i32, x as i32);
 
-                for &dir in &directions {
+                for &dir in &DIRECTIONS {
                     if is_xmas(&grid, coord, dir, 0) {
                         count += 1;
                     }
