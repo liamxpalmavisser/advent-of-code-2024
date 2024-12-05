@@ -59,8 +59,6 @@ fn split_input(input: &str) -> (&str, &str) {
 
 fn part1(input: &str) -> i32 {
     let (first_input, second_input) = split_input(input);
-    // println!("{first_input}");
-    println!("{second_input}");
     let rules = parse_rules(first_input);
     let order = parse_order(second_input);
     let mut middle_values: Vec<i32> = Vec::new();
@@ -72,8 +70,6 @@ fn part1(input: &str) -> i32 {
         for rule in rules.clone().into_iter() {
             let (first, second) = rule;
             if !rule_check(first, second, current_hash.clone()) {
-                println!("first is {first} and {second}");
-                println!("{idx}");
                 rule_broken = true;
                 break;
             }
@@ -81,7 +77,6 @@ fn part1(input: &str) -> i32 {
 
         if !rule_broken {
             if let Some(middle) = line.get(line.len() / 2) {
-                println!("Middle value of line {idx}: {}", middle);
                 middle_values.push(*middle);
             } else {
                 println!("Line {idx} is empty, no middle value.");
