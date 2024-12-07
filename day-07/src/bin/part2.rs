@@ -66,7 +66,7 @@ fn backtracking(first: i64, second: &[i64], expected: i64) -> bool {
 }
 
 fn concat_numbers_general(a: i64, b: i64) -> i64 {
-    let digits = (b as f64).log10().floor() as i64 + 1; // Count digits in b
+    let digits = (b as f64).log10().floor() as i64 + 1;
     a * 10_i64.pow(digits as u32) + b
 }
 
