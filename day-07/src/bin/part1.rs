@@ -28,20 +28,14 @@ fn backtracking(first: i64, second: &[i64], expected: i64) -> bool {
         return first == expected;
     }
 
-    let new_first_sum = first + second[0];
-    let new_first_product = first * second[0];
-
     let rest = &second[1..];
 
-    match (new_first_sum > expected, new_first_product > expected) {
-        (false, false) => {
-            backtracking(new_first_sum, rest, expected)
-                || backtracking(new_first_product, rest, expected)
-        }
-        (false, true) => backtracking(new_first_sum, rest, expected),
-        (true, false) => backtracking(new_first_product, rest, expected),
-        (true, true) => false,
-    }
+    let options = [first + second[0], first * second[0]];
+
+    options
+        .iter()
+        .filter(|&&new_first| new_first <= expected)
+        .any(|&new_first| backtracking(new_first, rest, expected))
 }
 
 fn part1(input: &str) -> i64 {
