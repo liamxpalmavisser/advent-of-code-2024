@@ -45,8 +45,7 @@ fn find_antinodes(
                     2 * coord_list[j].0 - coord_list[i].0,
                     2 * coord_list[j].1 - coord_list[i].1,
                 );
-                if in_bounds(bounds, &potential_antinode)
-                {
+                if in_bounds(bounds, &potential_antinode) {
                     covered_antinodes.insert(potential_antinode);
                 }
             }
