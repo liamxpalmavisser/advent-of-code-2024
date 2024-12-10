@@ -69,26 +69,16 @@ fn get_neighbours(grid: &Vec<Vec<i32>>, coord: (i32, i32)) -> Vec<(i32, i32)> {
 
 fn bfs(grid: &Vec<Vec<i32>>, start_coord: (i32, i32), ends: &mut HashSet<(i32, i32)>) -> i32 {
     let mut queue: VecDeque<(i32, i32)> = VecDeque::from(vec![start_coord]);
-    let mut visited: HashSet<(i32, i32)> = HashSet::new();
     let mut score = 0;
 
     while !queue.is_empty() && !ends.is_empty() {
         if let Some(current) = queue.pop_front() {
-            if visited.contains(&current) {
-                continue;
-            }
-
-            visited.insert(current);
-
-            if ends.remove(&current) {
+            if ends.contains(&current) {
                 score += 1;
             }
-
             let neighbours = get_neighbours(grid, current);
             for neighbour in neighbours {
-                if !visited.contains(&neighbour) {
-                    queue.push_back(neighbour);
-                }
+                queue.push_back(neighbour);
             }
         }
     }
@@ -115,6 +105,6 @@ mod tests {
     fn it_works() {
         let input = include_str!("./example.txt");
         let result = part1(input);
-        assert_eq!(result, 36 as i32);
+        assert_eq!(result, 81 as i32);
     }
 }
