@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use utils::*;
-
 fn main() {
     let input = include_str!("./input.txt");
     let output = part1(input);
@@ -54,13 +52,13 @@ fn dfs(number: i64, cache: &mut HashMap<(i64, usize), usize>, remaining_splits: 
 
 fn part1(input: &str) -> usize {
     let parsed_input = parse(input);
-    let mut joe = 0;
+    let mut n_splits = 0;
 
     for x in parsed_input.into_iter() {
-        joe += dfs(x, &mut HashMap::new(), 25);
+        n_splits += dfs(x, &mut HashMap::new(), 23);
     }
 
-    joe
+    n_splits
 }
 
 #[cfg(test)]
