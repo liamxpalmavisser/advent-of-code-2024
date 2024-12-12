@@ -1,48 +1,90 @@
-use std::collections::{HashSet, VecDeque};
-
+use std::collections::{HashMap, HashSet, VecDeque};
 use utils::*;
 
 fn main() {
     let input = include_str!("./input.txt");
-    let output = part1(input);
+    let output = part2(input);
     dbg!(output);
 }
 
-fn parse(input: &str) -> Grid<u8> {
-    let grid = Grid::parse(input);
-    grid
-}
+fn flood_fill(grid: &Grid<u8>, start_point: Point, visited: &mut HashSet<Point>) -> u32 {
+    let target_value = grid[start_point];
+    let mut todo = VecDeque::new();
 
-fn flood_fill(grid: &Grid<u8>, point: Point, visited: &mut HashSet<Point>) -> (i32, i32) {
-    let mut queue: VecDeque<Point> = VecDeque::new();
-    let mut points_visited = 0;
+    let mut corner_points = std::collections::HashMap::new();
+    let mut adjacent_points = std::collections::HashMap::new();
 
-    let mut perimeter = 0;
+    let mut region_size = 0;
 
-    queue.push_front(point);
-    visited.insert(point);
+    todo.push_back(start_point);
+    visited.insert(start_point);
 
-    while let Some(current_point) = queue.pop_back() {
-        points_visited += 1;
+    while let Some(point) = todo.pop_front() {
+        region_size += 1;
 
-        for neighbor in current_point.neighbors() {
-            if grid.contains(neighbor) {
-                if grid[current_point] == grid[neighbor] && !visited.contains(&neighbor) {
-                    queue.push_front(neighbor);
-                    visited.insert(neighbor);
-                } else if grid[current_point] != grid[neighbor] {
-                    perimeter += 1;
-                }
-            } else {
-                perimeter += 1;
+        let x = 2 * point.x;
+        let y = 2 * point.y;
+
+        add_to_points(&mut corner_points, x, y);
+        add_to_points(&mut corner_points, x + 2, y);
+        add_to_points(&mut corner_points, x, y + 2);
+        add_to_points(&mut corner_points, x + 2, y + 2);
+
+        add_to_points(&mut adjacent_points, x + 1, y);
+        add_to_points(&mut adjacent_points, x, y + 1);
+        add_to_points(&mut adjacent_points, x + 2, y + 1);
+        add_to_points(&mut adjacent_points, x + 1, y + 2);
+
+        for next in point.neighbors() {
+            if grid.contains(next) && grid[next] == target_value && !visited.contains(&next) {
+                visited.insert(next);
+                todo.push_back(next);
             }
         }
     }
 
-    return (points_visited, perimeter);
+    corner_points.retain(|_, v| *v < 4);
+    adjacent_points.retain(|_, v| *v < 2);
+
+    let mut side_count = 0;
+
+    for &point in corner_points.keys() {
+        let mut adjacent_sides = 0;
+        let directions = vec![
+            Point::new(0, -1),
+            Point::new(1, 0),
+            Point::new(0, 1),
+            Point::new(-1, 0),
+        ];
+
+        for i in 0..4 {
+            let first_adj = Point::new(point.x + directions[i].x, point.y + directions[i].y);
+            let second_adj = Point::new(
+                point.x + directions[(i + 1) % 4].x,
+                point.y + directions[(i + 1) % 4].y,
+            );
+
+            if adjacent_points.contains_key(&first_adj) && adjacent_points.contains_key(&second_adj)
+            {
+                adjacent_sides += 1;
+            }
+        }
+
+        if adjacent_sides == 1 {
+            side_count += 1;
+        } else if adjacent_sides == 4 {
+            side_count += 2;
+        }
+    }
+
+    region_size * side_count
 }
 
-fn calculate_cost(grid: &Grid<u8>) -> i32 {
+fn add_to_points(points_map: &mut HashMap<Point, u32>, x: i32, y: i32) {
+    *points_map.entry(Point::new(x, y)).or_insert(0) += 1;
+}
+
+fn calculate_cost(grid: &Grid<u8>) -> u32 {
     let mut visited = HashSet::new();
     let mut total_cost = 0;
 
@@ -50,8 +92,8 @@ fn calculate_cost(grid: &Grid<u8>) -> i32 {
         for x in 0..grid.width {
             let point = Point::new(x, y);
             if !visited.contains(&point) {
-                let (area, perimeter) = flood_fill(grid, point, &mut visited);
-                total_cost += area * perimeter
+                let cost = flood_fill(grid, point, &mut visited);
+                total_cost += cost;
             }
         }
     }
@@ -59,8 +101,8 @@ fn calculate_cost(grid: &Grid<u8>) -> i32 {
     total_cost
 }
 
-fn part1(input: &str) -> i32 {
-    let grid = parse(input);
+fn part2(input: &str) -> u32 {
+    let grid = Grid::parse(input);
     calculate_cost(&grid)
 }
 
@@ -71,7 +113,7 @@ mod tests {
     #[test]
     fn it_works() {
         let input = include_str!("./example.txt");
-        let result = part1(input);
-        assert_eq!(result, 1930 as i32);
+        let result = part2(input);
+        assert_eq!(result, 1206);
     }
 }
