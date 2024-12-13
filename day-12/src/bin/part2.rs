@@ -14,13 +14,13 @@ fn flood_fill(grid: &Grid<u8>, start_point: Point, visited: &mut HashSet<Point>)
     let mut corner_points = std::collections::HashMap::new();
     let mut adjacent_points = std::collections::HashMap::new();
 
-    let mut region_size = 0;
+    let mut area = 0;
 
     todo.push_back(start_point);
     visited.insert(start_point);
 
     while let Some(point) = todo.pop_front() {
-        region_size += 1;
+        area += 1;
 
         let x = 2 * point.x;
         let y = 2 * point.y;
@@ -77,7 +77,7 @@ fn flood_fill(grid: &Grid<u8>, start_point: Point, visited: &mut HashSet<Point>)
         }
     }
 
-    region_size * side_count
+    area * side_count
 }
 
 fn add_to_points(points_map: &mut HashMap<Point, u32>, x: i32, y: i32) {
