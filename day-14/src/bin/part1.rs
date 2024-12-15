@@ -6,7 +6,7 @@ fn main() {
     dbg!(output);
 }
 
-fn parse_robots(input: &str) -> Vec<i32> {
+fn parse_robot(input: &str) -> Vec<i32> {
     let mut result = Vec::new();
     let mut current_number = String::new();
     let mut negative = false;
@@ -35,7 +35,7 @@ fn parse_robots(input: &str) -> Vec<i32> {
 type Robot = [i32; 4];
 
 fn parse(input: &str) -> Vec<Robot> {
-    parse_robots(input)
+    parse_robot(input)
         .chunks(4)
         .map(|chunk| [chunk[0], chunk[1], chunk[2], chunk[3]])
         .collect()

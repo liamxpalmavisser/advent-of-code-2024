@@ -1,5 +1,23 @@
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Add, AddAssign};
 use std::str::FromStr;
+
+pub const ORIGIN: Point = Point::new(0, 0);
+pub const UP: Point = Point::new(0, -1);
+pub const DOWN: Point = Point::new(0, 1);
+pub const LEFT: Point = Point::new(-1, 0);
+pub const RIGHT: Point = Point::new(1, 0);
+pub const ORTHOGONAL: [Point; 4] = [UP, DOWN, LEFT, RIGHT];
+// Left to right and top to bottom.
+pub const DIAGONAL: [Point; 8] = [
+    Point::new(-1, -1),
+    UP,
+    Point::new(1, -1),
+    LEFT,
+    RIGHT,
+    Point::new(-1, 1),
+    DOWN,
+    Point::new(1, 1),
+];
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Point {
@@ -8,7 +26,7 @@ pub struct Point {
 }
 
 impl Point {
-    pub fn new(x: i32, y: i32) -> Self {
+    pub const fn new(x: i32, y: i32) -> Self {
         Point { x, y }
     }
 
@@ -35,6 +53,21 @@ impl Point {
     }
 }
 
+impl Add for Point {
+    type Output = Point;
+
+    fn add(self, rhs: Self) -> Self {
+        Point::new(self.x + rhs.x, self.y + rhs.y) 
+    }
+}
+
+impl AddAssign for Point {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+    }
+}
+
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Grid<T> {
     pub width: i32,
@@ -57,7 +90,21 @@ impl Grid<u8> {
     }
 }
 
+impl<T: Copy> Grid<T> {
+    pub fn new(width: i32, height: i32, value: T) -> Grid<T> {
+        Grid { width, height, bytes: vec![value; (width * height) as usize] }
+    }
+}
+
 impl<T> Grid<T> {
+    pub fn same_size_with<U: Copy>(&self, value: U) -> Grid<U> {
+        Grid {
+            width: self.width,
+            height: self.height,
+            bytes: vec![value; (self.width * self.height) as usize],
+        }
+    }
+
     pub fn contains(&self, point: Point) -> bool {
         point.x >= 0 && point.x < self.width && point.y >= 0 && point.y < self.height
     }
