@@ -168,8 +168,8 @@ fn part2(input: &str) -> i32 {
     let zero_points = &grid.find_all(b'[');
     let mut result = 0;
     for zero in zero_points.into_iter() {
-        let joe = 100 * zero.y + zero.x;
-        result += joe;
+        let score = 100 * zero.y + zero.x;
+        result += score;
     }
     result
 }
