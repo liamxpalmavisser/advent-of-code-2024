@@ -13,7 +13,7 @@ fn parse(input: &str) -> Grid<u8> {
     Grid::parse(input)
 }
 
-fn dijkstra(grid: Grid<u8>) -> Option<i32> {
+fn dijkstra(grid: Grid<u8>) -> i32 {
     let mut heap = PriorityQueue::new();
     let start: Point = grid.find(b'S').expect("Start should be there");
     let dir = RIGHT;
@@ -30,7 +30,7 @@ fn dijkstra(grid: Grid<u8>) -> Option<i32> {
         let current_cost = -current_priority;
 
         if current == end {
-            break;
+            return current_cost;
         }
 
         for new_dir in &[UP, LEFT, DOWN, RIGHT] {
@@ -43,18 +43,27 @@ fn dijkstra(grid: Grid<u8>) -> Option<i32> {
                         current_cost + 1001
                     }
                 };
-                cost_so_far.insert(next, new_cost);
-                heap.push((next, *new_dir), -new_cost);
+                if !cost_so_far.contains_key(&next)
+                    || if let Some(cost) = cost_so_far.get(&next).cloned() {
+                        new_cost < cost
+                    } else {
+                        false
+                    }
+                {
+                    cost_so_far.insert(next, new_cost);
+                    heap.push((next, *new_dir), -new_cost);
+                }
             }
         }
     }
-    cost_so_far.get(&end).cloned()
+
+    unreachable!()
 }
 
 fn part1(input: &str) -> i32 {
     let grid = parse(input);
 
-    dijkstra(grid).expect("There should be an outcome")
+    dijkstra(grid)
 }
 
 #[cfg(test)]
@@ -65,6 +74,6 @@ mod tests {
     fn it_works() {
         let input = include_str!("./example.txt");
         let result = part1(input);
-        assert_eq!(result, 11048 as i32);
+        assert_eq!(result, 7036 as i32);
     }
 }

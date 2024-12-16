@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut, Add, AddAssign};
+use std::ops::{Index, IndexMut, Add, AddAssign, Sub};
 use std::str::FromStr;
 
 pub const ORIGIN: Point = Point::new(0, 0);
@@ -58,6 +58,14 @@ impl Add for Point {
 
     fn add(self, rhs: Self) -> Self {
         Point::new(self.x + rhs.x, self.y + rhs.y) 
+    }
+}
+
+impl Sub for Point {
+    type Output = Point;
+
+    fn sub(self, rhs: Self) -> Self {
+        Point::new(self.x - rhs.x, self.y - rhs.y)
     }
 }
 
