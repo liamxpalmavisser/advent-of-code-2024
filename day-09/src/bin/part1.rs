@@ -53,8 +53,6 @@ fn move_blocks(mut empty_spots: VecDeque<usize>, mut files_positions: BTreeMap<u
         }
     }
 
-    // println!("{:?}", files_positions);
-
     let moved_blocks: i64 = files_positions
         .values()
         .enumerate()

@@ -9,7 +9,6 @@ fn main() {
 pub struct Solution<'a> {
     input: &'a str,
     col1: Vec<i32>,
-    // col2: Vec<i32>,
     counter: HashMap<i32, i32>,
 }
 

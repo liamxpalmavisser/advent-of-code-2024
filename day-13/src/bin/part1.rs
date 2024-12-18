@@ -114,9 +114,9 @@ fn dijkstra(end_point: (i32, i32), a: Button, b: Button) -> Option<i32> {
 
     heap.push(Reverse((0, start, start_depth, 0, 0)));
 
-    let mut visited: HashSet<(i32, i32, i32, i32)> = HashSet::new(); // Track (x, y, a_presses, b_presses)
+    let mut visited: HashSet<(i32, i32, i32, i32)> = HashSet::new();
     let mut min_cost: HashMap<((i32, i32), i32, i32), i32> = HashMap::new();
-    min_cost.insert((start, 0, 0), 0); // Store (x, y, a_presses, b_presses) as key
+    min_cost.insert((start, 0, 0), 0);
 
     while let Some(Reverse((current_cost, current_point, current_depth, a_presses, b_presses))) =
         heap.pop()

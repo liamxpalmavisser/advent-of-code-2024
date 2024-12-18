@@ -7,7 +7,6 @@ pub const DOWN: Point = Point::new(0, 1);
 pub const LEFT: Point = Point::new(-1, 0);
 pub const RIGHT: Point = Point::new(1, 0);
 pub const ORTHOGONAL: [Point; 4] = [UP, DOWN, LEFT, RIGHT];
-// Left to right and top to bottom.
 pub const DIAGONAL: [Point; 8] = [
     Point::new(-1, -1),
     UP,
@@ -139,10 +138,10 @@ impl<T: Copy + PartialEq> Grid<T> {
 
         self.bytes
             .iter()
-            .enumerate() // Get (index, value) pairs
-            .filter_map(|(index, &h)| if h == needle { Some(index) } else { None }) // Keep indices where the value matches
-            .map(to_point) // Convert indices to Points
-            .collect() // Collect all Points into a Vec
+            .enumerate() 
+            .filter_map(|(index, &h)| if h == needle { Some(index) } else { None })
+            .map(to_point) 
+            .collect() 
     }
 }
 
@@ -160,17 +159,14 @@ impl<T> IndexMut<Point> for Grid<T> {
     }
 }
 
-/// Splits input into lines as a vector of strings.
 pub fn split_lines(input: &str) -> Vec<String> {
     input.lines().map(String::from).collect()
 }
 
-/// Parses lines into a vector of T where T implements `FromStr`.
 pub fn parse_lines<T: FromStr>(input: &str) -> Vec<T> {
     input.lines().filter_map(|line| line.parse().ok()).collect()
 }
 
-/// Splits a single line of comma-separated values into a vector of T.
 pub fn parse_csv<T: FromStr>(input: &str) -> Vec<T> {
     input
         .split(',')

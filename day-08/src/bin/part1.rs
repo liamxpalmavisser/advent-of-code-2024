@@ -63,8 +63,6 @@ fn part1(input: &str) -> i32 {
         covered_antinodes = find_antinodes(antenna, covered_antinodes, &bounds)
     }
 
-    // println!("{:?}", covered_antinodes);
-
     covered_antinodes.len() as i32
 }
 
