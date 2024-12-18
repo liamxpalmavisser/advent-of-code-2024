@@ -12,7 +12,8 @@ fn parse(input: &str, n: usize) -> Grid<u8> {
     let mut grid = Grid::new(71, 71, b'.');
 
     let special_points: Vec<Point> = input
-        .lines().take(n)
+        .lines()
+        .take(n)
         .filter_map(|line| {
             let mut parts = line.split(',').map(|p| p.trim().parse::<i32>());
             if let (Some(Ok(x)), Some(Ok(y))) = (parts.next(), parts.next()) {
