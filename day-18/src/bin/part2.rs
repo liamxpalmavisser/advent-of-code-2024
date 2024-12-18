@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 
 use utils::*;
 
@@ -8,7 +8,7 @@ fn main() {
     dbg!(output);
 }
 
-fn parse(input: &str, size: i32, n: usize) -> (Grid<u8>, Point, Point) {
+fn parse(input: &str, n: usize, size: i32) -> (Grid<u8>, Point, Point) {
     let mut grid = Grid::new(size + 1, size + 1, b'.');
 
     let special_points: Vec<Point> = input
@@ -31,26 +31,23 @@ fn parse(input: &str, size: i32, n: usize) -> (Grid<u8>, Point, Point) {
     (grid, Point::new(0, 0), Point::new(size, size))
 }
 
-fn bfs(grid: &mut Grid<u8>, start: Point, end: Point) -> Option<HashMap<Point, Option<Point>>> {
+fn bfs(grid: &mut Grid<u8>, start: Point, end: Point) -> Option<i32> {
     let mut queue = VecDeque::new();
     let mut visited = HashSet::new();
 
-    let mut came_from = HashMap::new();
-    came_from.insert(start, None);
     visited.insert(start);
 
     queue.push_back((start, 0));
 
     while let Some((current, depth)) = queue.pop_front() {
         if current == end {
-            return Some(came_from);
+            return Some(depth);
         }
 
         for neighbor in current.neighbors() {
             if grid.contains(neighbor) && grid[neighbor] != b'#' && !visited.contains(&neighbor) {
                 queue.push_back((neighbor, depth + 1));
                 visited.insert(neighbor);
-                came_from.insert(neighbor, Some(current));
             }
         }
     }
@@ -68,7 +65,7 @@ fn find_obstacle(grid: &mut Grid<u8>, obstacle: Point, start: Point, end: Point)
 }
 
 fn part2(input: &str, first_n: usize, size: i32) -> (i32, i32) {
-    let (grid, start, end) = parse(input, size, first_n);
+    let (grid, start, end) = parse(input, first_n, size);
     let mut grid = grid.clone();
 
     let obstacle_points: Vec<Point> = input

@@ -4,12 +4,12 @@ use utils::*;
 
 fn main() {
     let input = include_str!("./input.txt");
-    let output = part1(input);
+    let output = part1(input, 1024, 70);
     dbg!(output);
 }
 
-fn parse(input: &str, n: usize) -> Grid<u8> {
-    let mut grid = Grid::new(71, 71, b'.');
+fn parse(input: &str, n: usize, size: i32) -> (Grid<u8>, Point, Point) {
+    let mut grid = Grid::new(size + 1, size + 1, b'.');
 
     let special_points: Vec<Point> = input
         .lines()
@@ -28,19 +28,20 @@ fn parse(input: &str, n: usize) -> Grid<u8> {
         grid[point] = b'#';
     }
 
-    grid
+    (grid, Point::new(0, 0), Point::new(size, size))
 }
 
-fn bfs(grid: Grid<u8>) -> i32 {
+fn bfs(grid: Grid<u8>, start: Point, end: Point) -> Option<i32> {
     let mut queue = VecDeque::new();
-    let start = Point::new(0, 0);
     let mut visited = HashSet::new();
+
+    visited.insert(start);
 
     queue.push_back((start, 0));
 
     while let Some((current, depth)) = queue.pop_front() {
-        if current == Point::new(70, 70) {
-            return depth;
+        if current == end {
+            return Some(depth);
         }
 
         for neighbor in current.neighbors() {
@@ -50,12 +51,12 @@ fn bfs(grid: Grid<u8>) -> i32 {
             }
         }
     }
-    unreachable!()
+    None
 }
 
-fn part1(input: &str) -> i32 {
-    let grid = parse(input, 1024);
-    let depth = bfs(grid);
+fn part1(input: &str, first_n: usize, size: i32) -> i32 {
+    let (grid, start, end) = parse(input, first_n, size);
+    let depth = bfs(grid, start, end).expect("Should be solution");
     depth
 }
 
@@ -66,7 +67,7 @@ mod tests {
     #[test]
     fn it_works() {
         let input = include_str!("./example.txt");
-        let result = part1(input);
+        let result = part1(input, 12, 6);
         assert_eq!(result, 22 as i32);
     }
 }
