@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 fn main() {
     let input = include_str!("./input.txt");
     let output = part1(input);
@@ -8,18 +10,21 @@ fn part1(input: &str) -> i32 {
     let (available_towels, designs) = parse(input);
 
     let mut possible_count = 0;
+    let mut cache = HashMap::new();
 
     for design in designs {
-        dp(design, &available_towels, &mut possible_count);
+        if dfs(design, &available_towels, &mut cache) {
+            possible_count += 1;
+        }
     }
 
     return possible_count;
 }
 
-fn parse(input: &str) -> (Vec<&str>, Vec<&str>) {
+fn parse(input: &str) -> (HashSet<&str>, Vec<&str>) {
     let available_towels = input.lines().next().expect("First line should be there");
 
-    let towels = available_towels
+    let towels: HashSet<&str> = available_towels
         .split(",")
         .map(|towel| towel.trim())
         .collect();
@@ -29,23 +34,26 @@ fn parse(input: &str) -> (Vec<&str>, Vec<&str>) {
     return (towels, designs);
 }
 
-fn dp(design: &str, available_towels: &Vec<&str>, possible_count: &mut i32) {
-    let mut is_possible = vec![false; design.len() + 1];
-    is_possible[0] = true;
+fn dfs(design: &str, available_towels: &HashSet<&str>, cache: &mut HashMap<String, bool>) -> bool {
+    if let Some(&result) = cache.get(design) {
+        return result;
+    }
 
-    for i in 0..design.len() {
-        if is_possible[i] {
-            for towel in available_towels {
-                if design[i..].starts_with(towel) {
-                    is_possible[i + towel.len()] = true;
-                }
+    for &towel in available_towels {
+        if towel == design {
+            cache.insert(design.to_string(), true);
+            return true;
+        }
+
+        if let Some(remaining_design) = design.strip_prefix(towel) {
+            if dfs(remaining_design, available_towels, cache) {
+                return true;
             }
         }
     }
 
-    if is_possible[design.len()] {
-        *possible_count += 1;
-    }
+    cache.insert(design.to_string(), false);
+    return false;
 }
 
 #[cfg(test)]

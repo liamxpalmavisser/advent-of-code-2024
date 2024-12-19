@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 fn main() {
     let input = include_str!("./input.txt");
     let output = part2(input);
@@ -8,37 +10,41 @@ fn part2(input: &str) -> i64 {
     let (available_towels, designs) = parse(input);
 
     let mut possible_count = 0;
+    let mut cache = HashMap::new();
 
     for design in designs {
-        let result = dp(design, &available_towels);
+        let result = dfs(design, &available_towels, &mut cache);
 
         possible_count += result;
     }
 
-    return possible_count;
+    return possible_count as i64;
 }
 
-fn dp(design: &str, available_towels: &Vec<&str>) -> i64 {
-    let mut n_options = vec![0; design.len() + 1];
-    n_options[0] = 1;
+fn dfs(design: &str, available_towels: &HashSet<&str>, cache: &mut HashMap<String, i64>) -> i64 {
+    if let Some(&result) = cache.get(design) {
+        return result;
+    }
+    let mut count = 0;
 
-    for i in 0..design.len() {
-        if n_options[i] > 0 {
-            for towel in available_towels {
-                if design[i..].starts_with(towel) {
-                    n_options[i + towel.len()] += n_options[i];
-                }
-            }
+    for &towel in available_towels {
+        if towel == design {
+            count += 1;
+        }
+
+        if let Some(remaining_design) = design.strip_prefix(towel) {
+            count += dfs(remaining_design, available_towels, cache)
         }
     }
 
-    return n_options[design.len()];
+    cache.insert(design.to_string(), count);
+    return count;
 }
 
-fn parse(input: &str) -> (Vec<&str>, Vec<&str>) {
+fn parse(input: &str) -> (HashSet<&str>, Vec<&str>) {
     let available_towels = input.lines().next().expect("First line should be there");
 
-    let towels = available_towels
+    let towels: HashSet<&str> = available_towels
         .split(",")
         .map(|towel| towel.trim())
         .collect();
